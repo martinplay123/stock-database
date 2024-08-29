@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Stock Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        input, button, textarea {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #exportImportArea {
+            width: 100%;
+            height: 100px;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Stock Database</h1>
+    
+    <h2>Add Stock Record</h2>
+    <input type="date" id="date" required>
+    <input type="time" id="time" required>
+    <input type="number" id="quantity" placeholder="Quantity" required>
+    <button onclick="addRecord()">Add Record</button>
+
+    <h2>Export/Import Database</h2>
+    <textarea id="exportImportArea" placeholder="Export data will appear here. To import, paste data here and click 'Import'."></textarea>
+    <br>
+    <button onclick="exportDatabase()">Export</button>
+    <button onclick="importDatabase()">Import</button>
+
+    <h2>Stock Records</h2>
+    <div id="recordsTable"></div>
+
+    <footer>
+        <p>View the <a href="https://github.com/yourusername/stock-database" target="_blank">source code on GitHub</a></p>
+    </footer>
+
+    <script>
+        let stockRecords = [];
+
+        function addRecord() {
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const quantity = document.getElementById('quantity').value;
+
+            if (!date || !time || !quantity) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            stockRecords.push({ date, time, quantity });
+            updateTable();
+            clearInputs();
+        }
+
+        function clearInputs() {
+            document.getElementById('date').value = '';
+            document.getElementById('time').value = '';
+            document.getElementById('quantity').value = '';
+        }
+
+        function updateTable() {
+            const table = document.getElementById('recordsTable');
+            let html = '<table><tr><th>Date</th><th>Time</th><th>Quantity</th></tr>';
+            
+            stockRecords.forEach(record => {
+                html += `<tr><td>${record.date}</td><td>${record.time}</td><td>${record.quantity}</td></tr>`;
+            });
+
+            html += '</table>';
+            table.innerHTML = html;
+        }
+
+        function exportDatabase() {
+            const exportArea = document.getElementById('exportImportArea');
+            exportArea.value = JSON.stringify(stockRecords);
+        }
+
+        function importDatabase() {
+            const importArea = document.getElementById('exportImportArea');
+            try {
+                stockRecords = JSON.parse(importArea.value);
+                updateTable();
+                alert('Database imported successfully');
+            } catch (error) {
+                alert('Error importing database. Please make sure the data is correctly formatted.');
+            }
+        }
+
+        // Initialize the table
+        updateTable();
+    </script>
+</body>
+</html>
